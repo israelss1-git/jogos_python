@@ -1,10 +1,17 @@
 import random
+import mensagens
 
+'''
+Jogo de Forca
+Author: Israel Silva de Souza
+Date: 20201102
+Describe: Jogo para adivinhação de palavras através de chutes únicos de letras. São 7 
+    tentativas até a montagem do boneco na forca. O número de letras, posições e 
+    acertos são demonstrados a cada iteração. 
+'''
 def jogar():
-
-    mensagem_inicial()
+    mensagens.mensagem_inicial('Forca')
     palavra_secreta = escolhe_palavra()
-    print(palavra_secreta)
     letras_acertadas = inicializa_letras_acertadas(palavra_secreta)
 
     enforcou = False
@@ -14,39 +21,34 @@ def jogar():
     print(letras_acertadas)
 
     while not enforcou and not acertou:
-        print('jogando')
-        chute = input('Digite uma letra: ')
+        chute = solicita_chute()
+
+        # Todas as comparações são feitas em caixa alta e sem espaços
         chute = chute.strip().upper()
 
+        # Verifica erros e acertos
         if chute in palavra_secreta:
-            index = 0
-            for letra in palavra_secreta:
-                if chute == letra:
-                    letras_acertadas[index] = letra
-                index += 1
+            verifica_chute(chute, palavra_secreta, letras_acertadas)
         else:
             erros += 1
-            desenha_forca(erros)
+            mensagens.desenha_forca(erros)
 
+        # Registra flag de erros e acertos para saída do loop
         enforcou = erros == 7
         acertou = '_' not in letras_acertadas
 
         print(letras_acertadas)
 
+    # Reporta o resultado do jogo
     if acertou:
-        imprime_mensagem_vencedor()
+        mensagens.imprime_mensagem_vencedor()
     else:
-        imprime_mensagem_perdedor(palavra_secreta)
+        mensagens.imprime_mensagem_perdedor(palavra_secreta)
 
-    print('Fim de jogo')
-
-
-def mensagem_inicial():
-    print("*********************************")
-    print("Bem vindo ao jogo de forca!")
-    print("*********************************")
+    mensagens.fim()
 
 
+# Escolhe uma palavras aleatoriamente, entre as opções existentes em arquivo.
 def escolhe_palavra():
     arquivo = open('palavras.txt', 'r')
     palavras = []
@@ -62,94 +64,25 @@ def escolhe_palavra():
     return palavra_secreta
 
 
+# Inicializa os espaços com o número de letras a serem acertadas
 def inicializa_letras_acertadas(palavra):
     return ['_' for dig in palavra]
 
 
-def imprime_mensagem_perdedor(palavra_secreta):
-    print("Puxa, você foi enforcado!")
-    print("A palavra era {}".format(palavra_secreta))
-    print("    _______________         ")
-    print("   /               \       ")
-    print("  /                 \      ")
-    print("//                   \/\  ")
-    print("\|   XXXX     XXXX   | /   ")
-    print(" |   XXXX     XXXX   |/     ")
-    print(" |   XXX       XXX   |      ")
-    print(" |                   |      ")
-    print(" \__      XXX      __/     ")
-    print("   |\     XXX     /|       ")
-    print("   | |           | |        ")
-    print("   | I I I I I I I |        ")
-    print("   |  I I I I I I  |        ")
-    print("   \_             _/       ")
-    print("     \_         _/         ")
-    print("       \_______/           ")
+# Verifica se a letra escolhida está na lista e em quais posições
+def verifica_chute(chute, palavra_secreta, letras_acertadas):
+    index = 0
+    for letra in palavra_secreta:
+        if chute == letra:
+            letras_acertadas[index] = letra
+        index += 1
 
 
-def imprime_mensagem_vencedor():
-    print("Parabéns, você ganhou!")
-    print("       ___________      ")
-    print("      '._==_==_=_.'     ")
-    print("      .-\\:      /-.    ")
-    print("     | (|:.     |) |    ")
-    print("      '-|:.     |-'     ")
-    print("        \\::.    /      ")
-    print("         '::. .'        ")
-    print("           ) (          ")
-    print("         _.' '._        ")
-    print("        '-------'       ")
-
-
-def desenha_forca(erros):
-    print("  _______     ")
-    print(" |/      |    ")
-
-    if(erros == 1):
-        print(" |      (_)   ")
-        print(" |            ")
-        print(" |            ")
-        print(" |            ")
-
-    if(erros == 2):
-        print(" |      (_)   ")
-        print(" |      \     ")
-        print(" |            ")
-        print(" |            ")
-
-    if(erros == 3):
-        print(" |      (_)   ")
-        print(" |      \|    ")
-        print(" |            ")
-        print(" |            ")
-
-    if(erros == 4):
-        print(" |      (_)   ")
-        print(" |      \|/   ")
-        print(" |            ")
-        print(" |            ")
-
-    if(erros == 5):
-        print(" |      (_)   ")
-        print(" |      \|/   ")
-        print(" |       |    ")
-        print(" |            ")
-
-    if(erros == 6):
-        print(" |      (_)   ")
-        print(" |      \|/   ")
-        print(" |       |    ")
-        print(" |      /     ")
-
-    if (erros == 7):
-        print(" |      (_)   ")
-        print(" |      \|/   ")
-        print(" |       |    ")
-        print(" |      / \   ")
-
-    print(" |            ")
-    print("_|___         ")
-    print()
+# Interage com o jogador verificando o chute
+def solicita_chute():
+    print('jogando')
+    chute = input('Digite uma letra: ')
+    return chute
 
 
 if __name__ == '__main__':
